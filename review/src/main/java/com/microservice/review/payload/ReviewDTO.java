@@ -1,0 +1,5 @@
+package com.microservice.review.payload;
+
+
+public class ReviewDTO {
+}
