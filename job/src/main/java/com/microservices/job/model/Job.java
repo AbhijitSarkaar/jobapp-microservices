@@ -15,14 +15,14 @@ import lombok.NoArgsConstructor;
 public class Job {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long jobId;
+    private Long id;
 
     @NotNull
     @Size(min = 3, message = "title needs to be at least 3 characters")
     private String title;
 
     @NotNull
-    @Size(min = 5, message = "title needs to be at least 5 characters")
+    @Size(min = 5, message = "description needs to be at least 5 characters")
     private String description;
 
     @NotNull
