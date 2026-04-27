@@ -52,4 +52,13 @@ public class JobServiceImpl implements JobService {
         jobRepository.deleteById(jobId);
         return new APIResponse("Job with id " + jobId + " deleted");
     }
+
+    @Override
+    public JobDTO getJobById(Long jobId) {
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new CustomResourceNotFoundException("Job", "job id", jobId)
+                );
+        return modelMapper.map(job, JobDTO.class);
+    }
+
 }

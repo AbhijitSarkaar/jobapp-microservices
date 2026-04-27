@@ -15,4 +15,6 @@ public interface JobService {
     JobDTO updateJob(@Valid JobRequestDTO jobRequestDTO, Long jobId);
 
     APIResponse deleteJob(Long jobId);
+
+    JobDTO getJobById(Long jobId);
 }
