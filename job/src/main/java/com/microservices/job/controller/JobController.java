@@ -24,6 +24,11 @@ public class JobController {
         return new ResponseEntity<>(jobService.getJobs(), HttpStatus.OK);
     }
 
+    @GetMapping("/jobs/{jobId}")
+    public ResponseEntity<JobDTO> getJobById(@PathVariable Long jobId) {
+        return new ResponseEntity<>(jobService.getJobById(jobId), HttpStatus.OK);
+    }
+
     @PostMapping("/jobs")
     public ResponseEntity<JobDTO> createJob(@Valid @RequestBody JobRequestDTO jobRequestDTO) {
         return new ResponseEntity<>(jobService.createJob(jobRequestDTO), HttpStatus.CREATED);

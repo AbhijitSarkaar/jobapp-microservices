@@ -1,0 +1,10 @@
+package com.microservices.company.payload;
+
+import lombok.Data;
+
+@Data
+public class CompanyDTO {
+    private Long id;
+    private String name;
+    private String description;
+}
