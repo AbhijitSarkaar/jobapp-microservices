@@ -6,6 +6,7 @@ import com.microservices.company.model.Company;
 import com.microservices.company.payload.CompanyDTO;
 import com.microservices.company.payload.CompanyRequestDTO;
 import com.microservices.company.repository.CompanyRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Slf4j
 public class CompanyServiceImpl implements CompanyService {
 
     @Autowired
@@ -31,8 +33,13 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public CompanyDTO getCompanyById(Long companyId) {
+        log.info(":::getCompanyById:::");
         Company company = companyRepository.findById(companyId)
-                .orElseThrow(() -> new CustomResourceNotFoundException("Company", "company id", companyId.toString()));
+                .orElseThrow(() -> {
+                    log.info(":::CustomResourceNotFoundException:::");
+                    return new CustomResourceNotFoundException("Company", "company id", companyId.toString());
+                });
+        log.info(company.getDescription());
         return modelMapper.map(company, CompanyDTO.class);
     }
 

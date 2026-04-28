@@ -30,4 +30,8 @@ public class Job {
 
     @NotNull
     private String location;
+
+    @NotNull
+    private Long companyId;
+
 }

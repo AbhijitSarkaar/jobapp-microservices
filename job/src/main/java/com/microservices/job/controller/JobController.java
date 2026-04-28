@@ -1,17 +1,22 @@
 package com.microservices.job.controller;
 
 import com.microservices.job.exception.APIResponse;
+import com.microservices.job.external.Company;
 import com.microservices.job.payload.JobDTO;
 import com.microservices.job.payload.JobRequestDTO;
 import com.microservices.job.service.JobService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api")
 public class JobController {

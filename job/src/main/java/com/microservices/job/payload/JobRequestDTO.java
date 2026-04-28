@@ -19,4 +19,7 @@ public class JobRequestDTO {
 
     @NotNull
     private String location;
+
+    @NotNull
+    private Long companyId;
 }

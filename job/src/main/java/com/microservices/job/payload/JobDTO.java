@@ -9,4 +9,5 @@ public class JobDTO {
     private String description;
     private Integer salary;
     private String location;
+    private Long companyId;
 }
