@@ -17,5 +17,5 @@ public interface JobService {
 
     APIResponse deleteJob(Long jobId);
 
-    JobDTO getJobById(Long jobId);
+    JobWithCompanyDTO getJobById(Long jobId);
 }

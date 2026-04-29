@@ -3,6 +3,7 @@ package com.microservices.job.service;
 import com.microservices.job.exception.APIResponse;
 import com.microservices.job.exception.CustomResourceNotFoundException;
 import com.microservices.job.external.Company;
+import com.microservices.job.mapper.JobMapper;
 import com.microservices.job.model.Job;
 import com.microservices.job.payload.JobDTO;
 import com.microservices.job.payload.JobRequestDTO;
@@ -28,24 +29,18 @@ public class JobServiceImpl implements JobService {
     @Autowired
     ModelMapper modelMapper;
 
-    @Value("${company.service.url}")
-    private String companyServiceUrl;
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Override
     public List<JobWithCompanyDTO> getJobs() {
         List<Job> jobs = jobRepository.findAll();
-        List<JobDTO> jobDtos = jobs.stream().map(job -> modelMapper.map(job, JobDTO.class)).toList();
-
         List<JobWithCompanyDTO> jobWithCompanyDtos = new ArrayList<>();
-
-        jobDtos.forEach(jobDTO -> {
-
-            JobWithCompanyDTO jobWithCompanyDto = new JobWithCompanyDTO();
-            jobWithCompanyDto.setJob(jobDTO);
-            jobWithCompanyDto.setCompany(getCompanyById(jobDTO.getCompanyId()));
-
-            jobWithCompanyDtos.add(jobWithCompanyDto);
-
+        jobs.forEach(job -> {
+            Company company = getCompanyById(job.getCompanyId());
+            jobWithCompanyDtos.add(
+                    JobMapper.JobWithCompanyDTOMapper(job, company)
+            );
         });
 
         return jobWithCompanyDtos;
@@ -63,7 +58,6 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public JobDTO updateJob(JobRequestDTO jobRequestDTO, Long jobId) {
-
         getCompanyById(jobRequestDTO.getCompanyId());
 
         Job job = modelMapper.map(getJobById(jobId), Job.class);
@@ -85,16 +79,17 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public JobDTO getJobById(Long jobId) {
+    public JobWithCompanyDTO getJobById(Long jobId) {
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new CustomResourceNotFoundException("Job", "job id", jobId)
                 );
-        return modelMapper.map(job, JobDTO.class);
+        Company company = getCompanyById(job.getCompanyId());
+
+        return JobMapper.JobWithCompanyDTOMapper(job, company);
     }
 
     public Company getCompanyById(Long companyId) {
-        RestTemplate restTemplate = new RestTemplate();
-        return restTemplate.getForObject(companyServiceUrl + "/" + companyId, Company.class);
+        return restTemplate.getForObject( "http://COMPANY-SERVICE:8082/api/companies/" + companyId, Company.class);
     }
 
 }

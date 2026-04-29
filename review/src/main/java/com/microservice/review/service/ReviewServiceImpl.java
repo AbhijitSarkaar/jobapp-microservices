@@ -9,10 +9,10 @@ import com.microservice.review.payload.ReviewDTO;
 import com.microservice.review.payload.ReviewRequestDTO;
 import com.microservice.review.payload.ReviewWithCompanyDTO;
 import com.microservice.review.repository.ReviewRepository;
+import com.netflix.discovery.converters.Auto;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -29,8 +29,8 @@ public class ReviewServiceImpl implements ReviewService {
     @Autowired
     ModelMapper modelMapper;
 
-    @Value("${company.service.url}")
-    private String companyServiceUrl;
+    @Autowired
+    RestTemplate restTemplate;
 
     @Override
     public List<ReviewWithCompanyDTO> getAllReviews() {
@@ -97,7 +97,6 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     public Company getCompanyById(Long companyId) {
-        RestTemplate restTemplate = new RestTemplate();
-        return restTemplate.getForObject(companyServiceUrl + "/" + companyId, Company.class);
+        return restTemplate.getForObject ("http://COMPANY-SERVICE/api/companies/" + companyId, Company.class);
     }
 }

@@ -33,13 +33,11 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public CompanyDTO getCompanyById(Long companyId) {
-        log.info(":::getCompanyById:::");
         Company company = companyRepository.findById(companyId)
                 .orElseThrow(() -> {
                     log.info(":::CustomResourceNotFoundException:::");
                     return new CustomResourceNotFoundException("Company", "company id", companyId.toString());
                 });
-        log.info(company.getDescription());
         return modelMapper.map(company, CompanyDTO.class);
     }
 
