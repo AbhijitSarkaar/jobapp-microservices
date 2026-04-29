@@ -40,12 +40,9 @@ public class JobServiceImpl implements JobService {
 
         jobDtos.forEach(jobDTO -> {
 
-            RestTemplate restTemplate = new RestTemplate();
-            Company company = restTemplate.getForObject(companyServiceUrl + "/" + jobDTO.getCompanyId(), Company.class);
-
             JobWithCompanyDTO jobWithCompanyDto = new JobWithCompanyDTO();
             jobWithCompanyDto.setJob(jobDTO);
-            jobWithCompanyDto.setCompany(company);
+            jobWithCompanyDto.setCompany(getCompanyById(jobDTO.getCompanyId()));
 
             jobWithCompanyDtos.add(jobWithCompanyDto);
 
@@ -56,20 +53,20 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public JobDTO createJob(JobRequestDTO jobRequestDTO) {
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.getForObject(companyServiceUrl + "/" + jobRequestDTO.getCompanyId(), Company.class);
+
+        getCompanyById(jobRequestDTO.getCompanyId());
+
         Job payload = modelMapper.map(jobRequestDTO, Job.class);
+
         return modelMapper.map(jobRepository.save(payload), JobDTO.class);
     }
 
     @Override
     public JobDTO updateJob(JobRequestDTO jobRequestDTO, Long jobId) {
 
+        getCompanyById(jobRequestDTO.getCompanyId());
+
         Job job = modelMapper.map(getJobById(jobId), Job.class);
-
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.getForObject(companyServiceUrl + "/" + jobRequestDTO.getCompanyId(), Company.class);
-
         job.setId(jobId);
         job.setCompanyId(jobRequestDTO.getCompanyId());
 
@@ -93,6 +90,11 @@ public class JobServiceImpl implements JobService {
                 .orElseThrow(() -> new CustomResourceNotFoundException("Job", "job id", jobId)
                 );
         return modelMapper.map(job, JobDTO.class);
+    }
+
+    public Company getCompanyById(Long companyId) {
+        RestTemplate restTemplate = new RestTemplate();
+        return restTemplate.getForObject(companyServiceUrl + "/" + companyId, Company.class);
     }
 
 }

@@ -57,11 +57,10 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public ReviewDTO createReview(ReviewRequestDTO reviewRequestDTO) {
 
-        // check valid company id
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.getForObject(companyServiceUrl + "/" + reviewRequestDTO.getCompanyId(), Company.class);
+        getCompanyById(reviewRequestDTO.getCompanyId());
 
         Review review = modelMapper.map(reviewRequestDTO, Review.class);
+
         return modelMapper.map(reviewRepository.save(review), ReviewDTO.class);
     }
 
@@ -70,15 +69,14 @@ public class ReviewServiceImpl implements ReviewService {
 
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomResourceNotFoundException("Review", "review id", reviewId.toString()));
+
         return modelMapper.map(review, ReviewDTO.class);
     }
 
     @Override
     public ReviewDTO updateReview(ReviewRequestDTO reviewRequestDTO, Long reviewId) {
 
-        // check valid company id
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.getForObject(companyServiceUrl + "/" + reviewRequestDTO.getCompanyId(), Company.class);
+        getCompanyById(reviewRequestDTO.getCompanyId());
 
         Review review = modelMapper.map(getReviewById(reviewId), Review.class);
 
