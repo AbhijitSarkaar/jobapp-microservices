@@ -4,6 +4,7 @@ import com.microservices.job.exception.APIResponse;
 import com.microservices.job.external.Company;
 import com.microservices.job.payload.JobDTO;
 import com.microservices.job.payload.JobRequestDTO;
+import com.microservices.job.payload.JobWithCompanyDTO;
 import com.microservices.job.service.JobService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,7 @@ public class JobController {
     JobService jobService;
 
     @GetMapping("/jobs")
-    public ResponseEntity<List<JobDTO>> getJobs() {
+    public ResponseEntity<List<JobWithCompanyDTO>> getJobs() {
         return new ResponseEntity<>(jobService.getJobs(), HttpStatus.OK);
     }
 
@@ -44,7 +45,7 @@ public class JobController {
             @Valid @RequestBody JobRequestDTO jobRequestDTO,
             @PathVariable Long jobId
     ) {
-        return new ResponseEntity<>(jobService.updateJob(jobRequestDTO, jobId), HttpStatus.CREATED);
+        return new ResponseEntity<>(jobService.updateJob(jobRequestDTO, jobId), HttpStatus.OK);
     }
 
     @DeleteMapping("/jobs/{jobId}")

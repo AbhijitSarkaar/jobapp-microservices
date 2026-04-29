@@ -24,4 +24,7 @@ public class ReviewRequestDTO {
     @Min(value = 1, message = "review needs to be more than or equal to 1")
     @Max(value = 5, message = "review needs to be less than or equal to 5")
     private Integer rating;
+
+    @NotNull
+    private Long companyId;
 }

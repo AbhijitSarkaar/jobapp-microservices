@@ -6,6 +6,7 @@ import com.microservices.job.external.Company;
 import com.microservices.job.model.Job;
 import com.microservices.job.payload.JobDTO;
 import com.microservices.job.payload.JobRequestDTO;
+import com.microservices.job.payload.JobWithCompanyDTO;
 import com.microservices.job.repository.JobRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -30,9 +32,26 @@ public class JobServiceImpl implements JobService {
     private String companyServiceUrl;
 
     @Override
-    public List<JobDTO> getJobs() {
+    public List<JobWithCompanyDTO> getJobs() {
         List<Job> jobs = jobRepository.findAll();
-        return jobs.stream().map(job -> modelMapper.map(job, JobDTO.class)).toList();
+        List<JobDTO> jobDtos = jobs.stream().map(job -> modelMapper.map(job, JobDTO.class)).toList();
+
+        List<JobWithCompanyDTO> jobWithCompanyDtos = new ArrayList<>();
+
+        jobDtos.forEach(jobDTO -> {
+
+            RestTemplate restTemplate = new RestTemplate();
+            Company company = restTemplate.getForObject(companyServiceUrl + "/" + jobDTO.getCompanyId(), Company.class);
+
+            JobWithCompanyDTO jobWithCompanyDto = new JobWithCompanyDTO();
+            jobWithCompanyDto.setJob(jobDTO);
+            jobWithCompanyDto.setCompany(company);
+
+            jobWithCompanyDtos.add(jobWithCompanyDto);
+
+        });
+
+        return jobWithCompanyDtos;
     }
 
     @Override
@@ -51,11 +70,13 @@ public class JobServiceImpl implements JobService {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.getForObject(companyServiceUrl + "/" + jobRequestDTO.getCompanyId(), Company.class);
 
+        job.setId(jobId);
+        job.setCompanyId(jobRequestDTO.getCompanyId());
+
         if(jobRequestDTO.getTitle() != null) job.setTitle(jobRequestDTO.getTitle());
         if(jobRequestDTO.getDescription() != null) job.setDescription(jobRequestDTO.getDescription());
         if(jobRequestDTO.getSalary() != null) job.setSalary(jobRequestDTO.getSalary());
         if(jobRequestDTO.getLocation() != null) job.setLocation(jobRequestDTO.getLocation());
-        job.setId(jobId);
 
         return modelMapper.map(jobRepository.save(job), JobDTO.class);
     }

@@ -4,6 +4,7 @@ package com.microservice.review.controller;
 import com.microservice.review.exception.APIResponse;
 import com.microservice.review.payload.ReviewDTO;
 import com.microservice.review.payload.ReviewRequestDTO;
+import com.microservice.review.payload.ReviewWithCompanyDTO;
 import com.microservice.review.service.ReviewService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ public class ReviewController {
     ReviewService reviewService;
 
     @GetMapping("/reviews")
-    public ResponseEntity<List<ReviewDTO>> reviews() {
+    public ResponseEntity<List<ReviewWithCompanyDTO>> reviews() {
         return new ResponseEntity<>(reviewService.getAllReviews(), HttpStatus.OK);
     }
 
@@ -46,5 +47,4 @@ public class ReviewController {
     public ResponseEntity<APIResponse> deleteReview(@PathVariable Long reviewId) {
         return new ResponseEntity<>(reviewService.deleteReview(reviewId), HttpStatus.OK);
     }
-
 }
