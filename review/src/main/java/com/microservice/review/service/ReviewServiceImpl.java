@@ -1,6 +1,7 @@
 
 package com.microservice.review.service;
 
+import com.microservice.review.client.CompanyClient;
 import com.microservice.review.exception.APIResponse;
 import com.microservice.review.exception.CustomResourceNotFoundException;
 import com.microservice.review.external.Company;
@@ -9,12 +10,10 @@ import com.microservice.review.payload.ReviewDTO;
 import com.microservice.review.payload.ReviewRequestDTO;
 import com.microservice.review.payload.ReviewWithCompanyDTO;
 import com.microservice.review.repository.ReviewRepository;
-import com.netflix.discovery.converters.Auto;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +29,7 @@ public class ReviewServiceImpl implements ReviewService {
     ModelMapper modelMapper;
 
     @Autowired
-    RestTemplate restTemplate;
+    CompanyClient companyClient;
 
     @Override
     public List<ReviewWithCompanyDTO> getAllReviews() {
@@ -97,6 +96,6 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     public Company getCompanyById(Long companyId) {
-        return restTemplate.getForObject ("http://COMPANY-SERVICE/api/companies/" + companyId, Company.class);
+        return companyClient.getCompany(companyId);
     }
 }

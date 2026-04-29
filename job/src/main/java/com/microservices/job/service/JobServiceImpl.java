@@ -1,5 +1,6 @@
 package com.microservices.job.service;
 
+import com.microservices.job.clients.CompanyClient;
 import com.microservices.job.exception.APIResponse;
 import com.microservices.job.exception.CustomResourceNotFoundException;
 import com.microservices.job.external.Company;
@@ -9,6 +10,7 @@ import com.microservices.job.payload.JobDTO;
 import com.microservices.job.payload.JobRequestDTO;
 import com.microservices.job.payload.JobWithCompanyDTO;
 import com.microservices.job.repository.JobRepository;
+import com.netflix.discovery.converters.Auto;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +32,7 @@ public class JobServiceImpl implements JobService {
     ModelMapper modelMapper;
 
     @Autowired
-    private RestTemplate restTemplate;
+    CompanyClient companyClient;
 
     @Override
     public List<JobWithCompanyDTO> getJobs() {
@@ -84,12 +86,11 @@ public class JobServiceImpl implements JobService {
                 .orElseThrow(() -> new CustomResourceNotFoundException("Job", "job id", jobId)
                 );
         Company company = getCompanyById(job.getCompanyId());
-
         return JobMapper.JobWithCompanyDTOMapper(job, company);
     }
 
     public Company getCompanyById(Long companyId) {
-        return restTemplate.getForObject( "http://COMPANY-SERVICE:8082/api/companies/" + companyId, Company.class);
+        return companyClient.getCompany(companyId);
     }
 
 }
