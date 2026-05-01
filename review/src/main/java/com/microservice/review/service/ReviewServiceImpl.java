@@ -5,6 +5,7 @@ import com.microservice.review.client.CompanyClient;
 import com.microservice.review.exception.APIResponse;
 import com.microservice.review.exception.CustomResourceNotFoundException;
 import com.microservice.review.external.Company;
+import com.microservice.review.messaging.ReviewMessageProducer;
 import com.microservice.review.model.Review;
 import com.microservice.review.payload.ReviewDTO;
 import com.microservice.review.payload.ReviewRequestDTO;
@@ -30,6 +31,9 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Autowired
     CompanyClient companyClient;
+
+    @Autowired
+    ReviewMessageProducer reviewMessageProducer;
 
     @Override
     public List<ReviewWithCompanyDTO> getAllReviews() {
@@ -60,7 +64,11 @@ public class ReviewServiceImpl implements ReviewService {
 
         Review review = modelMapper.map(reviewRequestDTO, Review.class);
 
-        return modelMapper.map(reviewRepository.save(review), ReviewDTO.class);
+        review = reviewRepository.save(review);
+
+        reviewMessageProducer.sendMessage(review);
+
+        return modelMapper.map(review, ReviewDTO.class);
     }
 
     @Override

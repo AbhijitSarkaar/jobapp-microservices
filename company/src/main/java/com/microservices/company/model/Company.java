@@ -24,4 +24,6 @@ public class Company {
     @NotNull
     @Size(min = 5, message = "Company description must be at least 5 characters")
     private String description;
+
+    private Double rating;
 }

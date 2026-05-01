@@ -3,9 +3,10 @@ package com.microservices.company.payload;
 import lombok.Data;
 
 @Data
-public class CompanyDTO {
+public class ReviewMessageDTO {
     private Long id;
-    private String name;
+    private String title;
     private String description;
     private Double rating;
+    private Long companyId;
 }

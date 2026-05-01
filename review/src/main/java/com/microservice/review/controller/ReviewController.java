@@ -2,6 +2,7 @@
 package com.microservice.review.controller;
 
 import com.microservice.review.exception.APIResponse;
+import com.microservice.review.model.Review;
 import com.microservice.review.payload.ReviewDTO;
 import com.microservice.review.payload.ReviewRequestDTO;
 import com.microservice.review.payload.ReviewWithCompanyDTO;
@@ -46,5 +47,14 @@ public class ReviewController {
     @DeleteMapping("/reviews/{reviewId}")
     public ResponseEntity<APIResponse> deleteReview(@PathVariable Long reviewId) {
         return new ResponseEntity<>(reviewService.deleteReview(reviewId), HttpStatus.OK);
+    }
+
+    @GetMapping("/reviews/average-rating")
+    public Double getAverageRating(@RequestParam Long companyId) {
+        List<ReviewWithCompanyDTO> reviews = reviewService.getAllReviews();
+        return reviews.stream()
+                .mapToDouble(item -> item.getReview().getRating())
+                .average()
+                .orElse(0.0);
     }
 }
