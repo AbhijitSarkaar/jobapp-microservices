@@ -5,4 +5,4 @@ WORKDIR /root
 
 COPY ./target/*.jar /root/jobms.jar
 
-CMD ["java", "-Dspring.profiles.active=dev", "-jar", "jobms.jar"]
+CMD ["java", "-Dspring.profiles.active=docker", "-jar", "jobms.jar"]

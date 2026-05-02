@@ -5,4 +5,4 @@ WORKDIR /root
 
 COPY ./target/*.jar /root/reviewms.jar
 
-CMD ["java", "-Dspring.profiles.active=dev", "-jar", "reviewms.jar"]
+CMD ["java", "-Dspring.profiles.active=docker", "-jar", "reviewms.jar"]
