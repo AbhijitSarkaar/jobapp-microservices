@@ -81,7 +81,5 @@ public class CompanyServiceImpl implements CompanyService {
         company.setRating(averageRating);
         companyRepository.save(company);
 
-
-
     }
 }
